@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkcompact_harmonics"]=self["webpackChunkcompact_harmonics"]||[]).push([[240],{8240:function(n,t,a){a.r(t),a.d(t,{default:function(){return p}});var c=a(6768);const u={class:"about"};function o(n,t,a,o,e,r){const s=(0,c.g2)("TopMenu");return(0,c.uX)(),(0,c.CE)("div",u,[(0,c.bF)(s),t[0]||(t[0]=(0,c.Lk)("h1",null,"This is an about page",-1))])}var e=a(2296),r={components:{TopMenu:e.A},data(){return{}}},s=a(1241);const i=(0,s.A)(r,[["render",o]]);var p=i}}]);
+//# sourceMappingURL=240.996d539f.js.map
