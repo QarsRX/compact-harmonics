@@ -21,22 +21,24 @@ L.Icon.Default.mergeOptions({
 });
 
   export default {
+    data() {
+      return {
+        map: null,
+      };
+    },
     name: 'LeafletMap',
     mounted(){
-      const map = L.map('map').setView([53.4808, -2.2426], 13); //17 @ manchester city,  12 @ manchester, 5 @ UK
+      const { center, zoom } = this.getMapCenter(this.$route.path);
+
+      //change center based on the current route
+
+      this.map = L.map('map').setView(center, zoom); //17 @ manchester city,  12 @ manchester, 5 @ UK
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors',
-      }).addTo(map);
+      }).addTo(this.map);
 
-      const marker1 = L.marker([53.4808, -2.2426])
-        .addTo(map)
-        .bindPopup('Manchester');
-
-      marker1.on('click', () => {
-    this.$router.push('/device1'); // or use window.location.href = '/page-a' if not using Vue Router
-          
-  });
+      this.addMapFeatures();
       /*
       const marker2 = L.marker([53.4631, -2.2913])
         .addTo(map)
@@ -151,7 +153,7 @@ legend.onAdd = function () {
   return div;
 };
 
-legend.addTo(map);
+legend.addTo(this.map);
 
   
 
@@ -164,28 +166,27 @@ legend.addTo(map);
   });*/
 
       //Heatmap data: [lat, lngm intensity]
-      const heatData = [
-
-      [53.4808, -2.2426, 0.91],
-      //[53.4800, -2.2430, 0.8],
-      //[51.507, -0.08, 0.2],
-      //[51.503, -0.095, 0.6],
-      
-      ];
-
-      L.heatLayer(heatData, {
-        radius: 25,
-        blur: 20,
-        maxZoom: 17,
-      }).addTo(map);
 
       setTimeout(() => {
-    map.invalidateSize();
+    this.map.invalidateSize();
   }, 300);
 
     window.addEventListener('resize', this.handleResize);
     window.addEventListener('orientationchange', this.handleResize);
     },
+    watch: {
+    '$route.path'(newPath) {
+      const { center, zoom } = this.getMapCenter(newPath);
+      this.map.setView(center, zoom); // update map center
+
+      this.map.eachLayer((layer) => {
+        if (layer instanceof L.Marker || layer instanceof L.HeatLayer) {
+          this.map.removeLayer(layer);
+        }
+      });
+      this.addMapFeatures();
+    },
+  },
     methods: {
     handleResize() {
       if (this.map) {
@@ -193,6 +194,58 @@ legend.addTo(map);
           this.map.invalidateSize();
         }, 300); // Delay ensures layout has updated
       }
+    },
+    getMapCenter(path){
+      switch (path){
+        case '/device1':
+          return { center: [53.4839, -2.2446], zoom: 17 };
+        case '/device2':
+          return { center: [55.9533, -3.1883], zoom: 17 };
+        case '/device3':
+          return { center: [51.5072, -0.1276], zoom: 17 };
+        default:
+          return { center: [53.4808, -2.2426], zoom: 17 };
+      }
+    },
+    addMapFeatures() {
+      //Add markers here
+      const marker1 = L.marker([53.4839, -2.2446])
+        .addTo(this.map)
+        .bindPopup('Manchester');
+
+      marker1.on('click', () => {
+    this.$router.push('/device1'); // or use window.location.href = '/page-a' if not using Vue Router
+          
+  });
+      const marker2 = L.marker([55.9533, -3.1883])
+        .addTo(this.map)
+        .bindPopup('Edinburgh');
+
+      marker2.on('click', () => {
+    this.$router.push('/device2'); // or use window.location.href = '/page-a' if not using Vue Router
+          
+  });
+      const marker3 = L.marker([51.5072, -0.1276])
+        .addTo(this.map)
+        .bindPopup('London');
+
+      marker3.on('click', () => {
+    this.$router.push('/device3'); // or use window.location.href = '/page-a' if not using Vue Router
+          
+  });
+      //Add heatmap here
+      const heatData = [
+      [53.4839, -2.2446, 0.91],
+      [55.9533, -3.1883, 0.91],
+      [51.5072, -0.1276, 0.91]
+      // Add more if needed
+    ];
+
+    L.heatLayer(heatData, {
+      radius: 25,
+      blur: 20,
+      maxZoom: 17,
+    }).addTo(this.map);
     }
   },
   beforeUnmount() {

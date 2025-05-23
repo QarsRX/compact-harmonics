@@ -46,13 +46,13 @@
           "/device2": { 
             battery_val: "80%",
             temp_val:  "28°C",
-            location: "London"
+            location: "Edinburgh"
           },
 
           "/device3": { 
             battery_val: "70%",
             temp_val:  "21°C",
-            location: "Edinburgh"
+            location: "London"
           },
         };
   
